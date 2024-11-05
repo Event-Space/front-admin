@@ -1,11 +1,11 @@
-import styles from './styles.module.css';
+import { Box } from '@mui/material';
 
 export default function Footer() {
   return (
-    <footer className={styles.footer}>
+    <Box>
       <p>
         Copyright © 2024 - <span>sheber.education</span> All rights reserved.
       </p>
-    </footer>
+    </Box>
   );
 }
