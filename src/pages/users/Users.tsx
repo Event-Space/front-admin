@@ -44,7 +44,7 @@ export default function UsersPage() {
     }).then(response => {
       if (response) {
         setData(response);
-        setFilteredData(response); // Set initial filtered data
+        setFilteredData(response);
       }
     });
   };
@@ -52,13 +52,14 @@ export default function UsersPage() {
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const query = event.target.value.toLowerCase();
     setSearchQuery(query);
+
     if (data) {
       setFilteredData(
         data.filter(
           user =>
-            user.email.toLowerCase().includes(query) ||
-            user.firstname.toLowerCase().includes(query) ||
-            user.lastname.toLowerCase().includes(query),
+            (user.email?.toLowerCase() || '').includes(query) ||
+            (user.firstname?.toLowerCase() || '').includes(query) ||
+            (user.lastname?.toLowerCase() || '').includes(query),
         ),
       );
     }

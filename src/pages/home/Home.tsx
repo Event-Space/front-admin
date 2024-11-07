@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import {
   Box,
   Typography,
@@ -8,8 +8,6 @@ import {
   Card,
   Button,
   CardActions,
-  CardContent,
-  CardHeader,
 } from '@mui/material';
 import useFetch from '../../shared/network/useFetch';
 import { useUserStore } from '../../app/store/useUserStore';

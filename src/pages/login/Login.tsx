@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom'; // Import useNavigate instead of useHistory
+import { useNavigate } from 'react-router-dom';
 import { SupervisedUserCircleOutlined } from '@mui/icons-material';
 import {
   CircularProgress,

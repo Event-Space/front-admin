@@ -1,14 +1,13 @@
 import { Menu, MenuItem, Sidebar } from 'react-pro-sidebar';
 import HomeIcon from '@mui/icons-material/Home';
-import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
-import CreditCardIcon from '@mui/icons-material/CreditCard';
-import SettingsIcon from '@mui/icons-material/Settings';
 import SchoolIcon from '@mui/icons-material/SchoolOutlined';
 import GroupIcon from '@mui/icons-material/Group';
 import { LogoutOutlined } from '@mui/icons-material';
 import { useSidebar } from '../../app/store/useSidebar';
 import { useUserStore } from '../../app/store/useUserStore';
 import { useLocation } from 'react-router-dom';
+import LocationCityIcon from '@mui/icons-material/LocationCity';
+import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 
 const SidebarW = () => {
   const { isSidebarOpen } = useSidebar();
@@ -18,6 +17,8 @@ const SidebarW = () => {
   const menuItems = [
     { name: 'Dashboard', icon: <HomeIcon />, path: '/' },
     { name: 'Users', icon: <GroupIcon />, path: '/users' },
+    { name: 'Spaces', icon: <LocationCityIcon />, path: '/spaces' },
+    { name: 'Calendar', icon: <CalendarMonthIcon />, path: '/calendar' },
   ];
 
   return (
