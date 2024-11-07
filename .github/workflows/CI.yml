@@ -36,3 +36,10 @@ jobs:
           CI: ""
         with:
           cmd: build
+
+      - name: Publish to DockerHub
+        uses: elgohr/Publish-Docker-Github-Action@v5
+        with:
+          name: thejustrusik/event-space-fron-admin
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
