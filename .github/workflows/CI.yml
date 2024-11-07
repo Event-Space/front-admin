@@ -16,7 +16,7 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Unset CI
-        run: CI=''
+        run: CI=""
 
       - name: Set Node.js
         uses: actions/setup-node@v4
@@ -25,10 +25,14 @@ jobs:
 
       - name: Run install
         uses: borales/actions-yarn@v5
+        env:
+          CI: ""
         with:
           cmd: install 
           
       - name: Build production bundle
         uses: borales/actions-yarn@v5
+        env:
+          CI: ""
         with:
           cmd: build
