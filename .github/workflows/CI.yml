@@ -15,6 +15,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Unset CI
+        run: CI=''
+
       - name: Set Node.js
         uses: actions/setup-node@v4
         with:
