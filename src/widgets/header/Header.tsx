@@ -1,24 +1,23 @@
-import { Box, IconButton, useTheme } from '@mui/material';
-import { ColorModeContext } from '../../shared/theme/theme';
-import { useContext } from 'react';
-import { LightModeOutlined, DarkModeOutlined } from '@mui/icons-material';
-import FullscreenButton from '../../shared/ui/fullScreenButton/FullScreenButton';
+import { Box, Typography, IconButton } from '@mui/material';
+import MenuOutlinedIcon from '@mui/icons-material/MenuOutlined';
+import { FullscreenButton } from '../../shared/ui';
+import { useSidebar } from '../../app/store/useSidebar';
 
 export default function Header() {
-  const theme = useTheme();
-  const colorMode = useContext(ColorModeContext);
+  const { toggleSidebar } = useSidebar();
+
   return (
-    <Box display="flex" justifyContent="flex-end" p="2">
-      <Box display="flex">
-        <IconButton onClick={colorMode.toggleColorMode}>
-          {theme.palette.mode === 'dark' ? (
-            <DarkModeOutlined />
-          ) : (
-            <LightModeOutlined />
-          )}
-        </IconButton>
-        <FullscreenButton />
-      </Box>
+    <Box
+      display="flex"
+      justifyContent="space-between"
+      alignItems="center"
+      p="2"
+    >
+      <IconButton onClick={toggleSidebar}>
+        <MenuOutlinedIcon />
+      </IconButton>
+      <Typography>Event Space</Typography>
+      <FullscreenButton />
     </Box>
   );
 }

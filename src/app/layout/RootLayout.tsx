@@ -1,25 +1,21 @@
-import { Footer, Header, Sidebar } from '../../widgets';
-import { FC, ReactNode } from 'react';
+import { Outlet } from 'react-router-dom';
+import { Footer, Header, SidebarW } from '../../widgets';
 
-interface RootLayoutProps {
-  children: ReactNode;
-}
-
-const RootLayout: FC<RootLayoutProps> = ({ children }) => {
+export default function RootLayout() {
   return (
-    <div className="root-layout">
-      <Sidebar />
-      <section>
-        <header>
+    <div className="app">
+      <SidebarW />
+      <section className="app-content">
+        <header className="header">
           <Header />
         </header>
-        <main className="content">{children}</main>
-        <footer>
+        <main className="content">
+          <Outlet />
+        </main>
+        <footer className="footer">
           <Footer />
         </footer>
       </section>
     </div>
   );
-};
-
-export default RootLayout;
+}
