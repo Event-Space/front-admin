@@ -1,41 +1,41 @@
 import { useEffect, useState } from 'react';
-import useFetch from '../../shared/network/useFetch';
-import { IUser } from '../../entities/types/IUser';
-import { useUserStore } from '../../app/store/useUserStore';
 import {
   Box,
-  Breadcrumbs,
-  Button,
-  CircularProgress,
-  Link,
   Typography,
+  CircularProgress,
+  Breadcrumbs,
+  Link,
+  Button,
   TextField,
 } from '@mui/material';
-import UsersTable from '../../shared/ui/UsersTable/UsersTable';
-import EditUserDialog from '../../shared/ui/EditUserDialog/EditUserDialog';
-import DeleteUserDialog from '../../shared/ui/DeleteUserDialog/DeleteUserDialog';
-import CreateUserDialog from '../../shared/ui/CreateUserDialog/CreateUserDialog';
+import useFetch from '../../shared/network/useFetch';
+import { useUserStore } from '../../app/store/useUserStore';
+import { SpaceTable } from '../../shared/ui/SpaceTable';
+import { ISpace } from '../../entities/types/ISpace';
+import { EditSpaceDialog } from '../../shared/ui/EditSpaceDialog';
+import { DeleteSpaceDialog } from '../../shared/ui/DeleteSpaceDialog';
+import { CreateSpaceDialog } from '../../shared/ui/CreateSpaceDialog';
 
-export default function UsersPage() {
+export default function SpacePage() {
   const { user, loading: loadingUser } = useUserStore();
-  const [data, setData] = useState<IUser[] | undefined>();
-  const [filteredData, setFilteredData] = useState<IUser[] | undefined>();
+  const [data, setData] = useState<ISpace[] | undefined>();
+  const [filteredData, setFilteredData] = useState<ISpace[] | undefined>();
   const [searchQuery, setSearchQuery] = useState<string>('');
 
-  const { loading: loadingData, fetchData } = useFetch<IUser[]>(
-    'https://server.kenuki.org/api/manager/users',
+  const { loading: loadingData, fetchData } = useFetch<ISpace[]>(
+    'https://zenuki.kz/api/v1/space',
   );
 
   const [openEdit, setOpenEdit] = useState(false);
-  const [selectedUser, setSelectedUser] = useState<IUser | null>(null);
+  const [selectedSpace, setSelectedSpace] = useState<ISpace | null>(null);
   const [openCreate, setOpenCreate] = useState(false);
   const [openDelete, setOpenDelete] = useState(false);
 
-  const { fetchData: deleteUser } = useFetch<IUser[]>(
-    `https://server.kenuki.org/api/manager/users?userEmail=${selectedUser?.email}`,
+  const { fetchData: deleteSpace } = useFetch<ISpace[]>(
+    `https://zenuki.kz/api/v1/space/delete/${selectedSpace?.id}`,
   );
 
-  const fetchUserData = () => {
+  const fetchSpaceData = () => {
     fetchData({
       headers: {
         Authorization: `Bearer ${user?.tokens.accessToken}`,
@@ -55,64 +55,59 @@ export default function UsersPage() {
 
     if (data) {
       setFilteredData(
-        data.filter(
-          user =>
-            (user.email?.toLowerCase() || '').includes(query) ||
-            (user.firstname?.toLowerCase() || '').includes(query) ||
-            (user.lastname?.toLowerCase() || '').includes(query),
-        ),
+        data.filter(space => (space.name?.toLowerCase() || '').includes(query)),
       );
     }
   };
 
-  const handleEditClick = (user: IUser) => {
-    setSelectedUser(user);
+  const handleEditClick = (space: ISpace) => {
+    setSelectedSpace(space);
     setOpenEdit(true);
   };
 
-  const handleDeleteClick = (user: IUser) => {
-    setSelectedUser(user);
+  const handleDeleteClick = (space: ISpace) => {
+    setSelectedSpace(space);
     setOpenDelete(true);
   };
 
   const handleCloseEditModal = () => {
-    setSelectedUser(null);
+    setSelectedSpace(null);
     setOpenEdit(false);
-    fetchUserData();
+    fetchSpaceData();
   };
 
   const handleCloseCreateModal = () => {
-    setSelectedUser(null);
+    setSelectedSpace(null);
     setOpenCreate(false);
-    fetchUserData();
+    fetchSpaceData();
   };
 
   const handleCloseDeleteModal = () => {
-    setSelectedUser(null);
+    setSelectedSpace(null);
     setOpenDelete(false);
-    fetchUserData();
+    fetchSpaceData();
   };
 
   const handleCreateUser = () => {
     setOpenCreate(true);
-    setSelectedUser(null);
+    setSelectedSpace(null);
   };
 
   const confirmDelete = () => {
-    setSelectedUser(null);
-    deleteUser({
+    setSelectedSpace(null);
+    deleteSpace({
       method: 'DELETE',
       headers: {
         Authorization: `Bearer ${user?.tokens.accessToken}`,
         'Content-Type': 'application/json',
       },
     });
-    fetchUserData();
+    fetchSpaceData();
   };
 
   useEffect(() => {
-    fetchUserData();
-  }, [setSelectedUser]);
+    fetchSpaceData();
+  }, [setSelectedSpace]);
 
   return (
     <section style={{ minHeight: '90vh' }}>
@@ -121,7 +116,7 @@ export default function UsersPage() {
           <Link underline="hover" color="inherit" href="/">
             Dashboard
           </Link>
-          <Typography color="text.primary">Users</Typography>
+          <Typography color="text.primary">Spaces</Typography>
         </Breadcrumbs>
 
         <Box
@@ -138,10 +133,10 @@ export default function UsersPage() {
               fontFamily: '"Montserrat", sans-serif',
             }}
           >
-            Users
+            Spaces
           </Typography>
           <Button variant="contained" onClick={handleCreateUser}>
-            Create new user
+            Create new space
           </Button>
         </Box>
 
@@ -155,42 +150,42 @@ export default function UsersPage() {
         >
           <TextField
             variant="standard"
-            placeholder="Search users"
+            placeholder="Search spaces..."
             value={searchQuery}
             onChange={handleSearchChange}
             sx={{ width: '250px', fontSize: '18px', padding: '0' }}
           />
-          <Typography>Total Users: {filteredData?.length}</Typography>
+          <Typography>Total Spaces: {filteredData?.length}</Typography>
         </Box>
 
         {(loadingData || loadingUser) && <CircularProgress />}
 
         {!loadingData && filteredData && (
-          <UsersTable
+          <SpaceTable
             data={filteredData}
             onEditClick={handleEditClick}
             onDeleteClick={handleDeleteClick}
           />
         )}
 
-        {selectedUser && (
-          <EditUserDialog
+        {selectedSpace && (
+          <EditSpaceDialog
             open={openEdit}
             onClose={handleCloseEditModal}
-            user={selectedUser}
+            space={selectedSpace}
           />
         )}
 
-        {selectedUser && (
-          <DeleteUserDialog
+        {selectedSpace && (
+          <DeleteSpaceDialog
             open={openDelete}
             onClose={handleCloseDeleteModal}
-            user={selectedUser}
+            space={selectedSpace}
             onConfirm={confirmDelete}
           />
         )}
 
-        <CreateUserDialog open={openCreate} onClose={handleCloseCreateModal} />
+        <CreateSpaceDialog open={openCreate} onClose={handleCloseCreateModal} />
       </Box>
     </section>
   );

@@ -9,7 +9,7 @@ import { useLocation } from 'react-router-dom';
 import LocationCityIcon from '@mui/icons-material/LocationCity';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 
-const SidebarW = () => {
+const SidebarC = () => {
   const { isSidebarOpen } = useSidebar();
   const { logout } = useUserStore();
   const location = useLocation();
@@ -52,4 +52,4 @@ const SidebarW = () => {
   );
 };
 
-export default SidebarW;
+export default SidebarC;

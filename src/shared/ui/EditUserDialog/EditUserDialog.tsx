@@ -12,7 +12,7 @@ import {
   Button,
 } from '@mui/material';
 import { IUser, UserRole } from '../../../entities/types/IUser';
-import useFetch from '../../../shared/network/useFetch';
+import useFetch from '../../network/useFetch';
 import { useUserStore } from '../../../app/store/useUserStore';
 
 interface EditUserDialogProps {

@@ -9,6 +9,7 @@ import HomePage from '../../pages/home/Home';
 import LoginPage from '../../pages/login/Login';
 import PrivateRoute from './PrivateRoute';
 import UsersPage from '../../pages/users/Users';
+import SpacePage from '../../pages/space/Space';
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -27,6 +28,14 @@ const router = createBrowserRouter(
           element={
             <PrivateRoute>
               <UsersPage />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/spaces"
+          element={
+            <PrivateRoute>
+              <SpacePage />
             </PrivateRoute>
           }
         />

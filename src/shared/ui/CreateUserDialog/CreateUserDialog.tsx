@@ -9,7 +9,7 @@ import {
   Button,
 } from '@mui/material';
 import { useUserStore } from '../../../app/store/useUserStore';
-import useFetch from '../../../shared/network/useFetch';
+import useFetch from '../../network/useFetch';
 
 interface CreateUserDialogProps {
   open: boolean;
