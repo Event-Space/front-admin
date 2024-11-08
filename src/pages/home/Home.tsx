@@ -31,9 +31,7 @@ export default function HomePage() {
   return (
     <Box sx={{ padding: '20px' }}>
       <Breadcrumbs aria-label="breadcrumb" sx={{ marginBottom: '20px' }}>
-        <Link underline="hover" color="inherit" href="/">
-          Home
-        </Link>
+        <Link underline="hover" color="inherit" href="/"></Link>
         <Typography color="text.primary">Dashboard</Typography>
       </Breadcrumbs>
 
