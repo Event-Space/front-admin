@@ -40,3 +40,7 @@ jobs:
           name: thejustrusik/event-space-fron-admin
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Update Project in Server
+        run: |
+          curl -H "Authorization: Bearer ${{ secrets.WATCHTOWER_TOKEN }}" https://watchtower.kenuki.org/v1/update
