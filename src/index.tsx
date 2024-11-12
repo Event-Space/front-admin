@@ -1,6 +1,5 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import './shared/styles/index.css';
 import App from './app/App';
 import { UserProvider } from './app/provider/UserProvider';
 
