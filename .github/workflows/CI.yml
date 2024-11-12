@@ -1,39 +1,36 @@
 name: CI
 on:
   push:
-    branches: [ "develop" ]
+    branches: ['develop']
   pull_request:
-    branches: [ "develop" ]
-    
+    branches: ['develop']
+
 jobs:
   build:
     runs-on: ubuntu-latest
     permissions:
       contents: write
       packages: write
-      
+
     steps:
       - uses: actions/checkout@v4
-
-      - name: Unset CI
-        run: CI=""
 
       - name: Set Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 23.x
+          node-version: 20.x
 
-      - name: Run install
+      - name: Run Yarn Install
         uses: borales/actions-yarn@v5
         env:
-          CI: ""
+          CI: ''
         with:
-          cmd: install 
-          
-      - name: Build production bundle
+          cmd: install
+
+      - name: Build Production Bundle
         uses: borales/actions-yarn@v5
         env:
-          CI: ""
+          CI: ''
         with:
           cmd: build
 
