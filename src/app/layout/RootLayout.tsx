@@ -1,11 +1,12 @@
 import { Outlet } from 'react-router-dom';
 import { Footer, Header, SidebarW } from '../../widgets';
+import { Box } from '@mui/material';
 
 export default function RootLayout() {
   return (
-    <div className="app">
+    <Box sx={{ display: 'flex' }}>
       <SidebarW />
-      <section className="app-content">
+      <Box sx={{ width: '100%' }}>
         <header className="header">
           <Header />
         </header>
@@ -15,7 +16,7 @@ export default function RootLayout() {
         <footer className="footer">
           <Footer />
         </footer>
-      </section>
-    </div>
+      </Box>
+    </Box>
   );
 }
