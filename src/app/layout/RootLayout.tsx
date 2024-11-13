@@ -1,6 +1,7 @@
 import { Outlet } from 'react-router-dom';
 import { Footer, Header, SidebarW } from '../../widgets';
 import { Box } from '@mui/material';
+import '.././../shared/styles/index.css';
 
 export default function RootLayout() {
   return (
