@@ -28,7 +28,7 @@ export default function EditUserDialog({
 }: EditUserDialogProps) {
   const { user: userToken } = useUserStore();
   const { fetchData: editUser } = useFetch<IUser[]>(
-    `https://server.kenuki.org/api/manager/users?userEmail=${user.email}`,
+    `https://space-event.kenuki.org/security-service/api/manager/users?userEmail=${user.email}`,
   );
 
   const [updatedUser, setUpdatedUser] = useState<IUser>({

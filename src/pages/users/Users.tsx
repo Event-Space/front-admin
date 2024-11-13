@@ -14,6 +14,7 @@ import {
 import UsersTable from '../../shared/ui/UsersTable/UsersTable';
 import EditUserDialog from '../../shared/ui/EditUserDialog/EditUserDialog';
 import DeleteUserDialog from '../../shared/ui/DeleteUserDialog/DeleteUserDialog';
+import { TablePagination } from '@mui/material';
 import CreateUserDialog from '../../shared/ui/CreateUserDialog/CreateUserDialog';
 
 export default function UsersPage() {
@@ -21,9 +22,11 @@ export default function UsersPage() {
   const [data, setData] = useState<IUser[] | undefined>();
   const [filteredData, setFilteredData] = useState<IUser[] | undefined>();
   const [searchQuery, setSearchQuery] = useState<string>('');
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
 
   const { loading: loadingData, fetchData } = useFetch<IUser[]>(
-    'https://server.kenuki.org/api/manager/users',
+    'https://space-event.kenuki.org/security-service/api/manager/users',
   );
 
   const [openEdit, setOpenEdit] = useState(false);
@@ -32,7 +35,7 @@ export default function UsersPage() {
   const [openDelete, setOpenDelete] = useState(false);
 
   const { fetchData: deleteUser } = useFetch<IUser[]>(
-    `https://server.kenuki.org/api/manager/users?userEmail=${selectedUser?.email}`,
+    `https://space-event.kenuki.org/security-service/api/manager/users?userEmail=${selectedUser?.email}`,
   );
 
   const fetchUserData = () => {
@@ -52,6 +55,7 @@ export default function UsersPage() {
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const query = event.target.value.toLowerCase();
     setSearchQuery(query);
+    setPage(0);
 
     if (data) {
       setFilteredData(
@@ -166,11 +170,28 @@ export default function UsersPage() {
         {(loadingData || loadingUser) && <CircularProgress />}
 
         {!loadingData && filteredData && (
-          <UsersTable
-            data={filteredData}
-            onEditClick={handleEditClick}
-            onDeleteClick={handleDeleteClick}
-          />
+          <>
+            <UsersTable
+              data={filteredData.slice(
+                page * rowsPerPage,
+                page * rowsPerPage + rowsPerPage,
+              )}
+              onEditClick={handleEditClick}
+              onDeleteClick={handleDeleteClick}
+            />
+            <TablePagination
+              component="div"
+              count={filteredData.length}
+              rowsPerPage={rowsPerPage}
+              page={page}
+              onPageChange={(event, newPage) => setPage(newPage)}
+              onRowsPerPageChange={event => {
+                setRowsPerPage(parseInt(event.target.value, 10));
+                setPage(0);
+              }}
+              rowsPerPageOptions={[5, 10, 25]}
+            />
+          </>
         )}
 
         {selectedUser && (

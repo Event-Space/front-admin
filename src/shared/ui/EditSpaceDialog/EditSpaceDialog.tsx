@@ -30,8 +30,8 @@ export default function EditSpaceDialog({
   const [changes, setChanges] = useState<{ [key: string]: any }>({});
 
   const apiUrl = file
-    ? `https://zenuki.kz/api/v1/space/updateWithFile/${space.id}`
-    : `https://zenuki.kz/api/v1/space/update/${space.id}`;
+    ? `https://space-event.kenuki.org/order-service/api/v1/space/updateWithFile/${space.id}`
+    : `https://space-event.kenuki.org/order-service/api/v1/space/update/${space.id}`;
 
   const { fetchData: editSpace } = useFetch<ISpace>(apiUrl);
 

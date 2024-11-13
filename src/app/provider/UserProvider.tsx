@@ -31,6 +31,7 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({
 
   useEffect(() => {
     const interval = setInterval(() => {
+      console.log('refreshed token');
       refreshTokens();
     }, 60000);
 
@@ -64,7 +65,7 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({
       }
 
       const response = await fetch(
-        'https://server.kenuki.org/api/auth/refresh',
+        'https://space-event.kenuki.org/security-service/api/auth/refresh',
         {
           method: 'POST',
           headers: {
@@ -75,10 +76,7 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({
       );
 
       if (!response.ok) {
-        if (response.status === 401) {
-          logout();
-        }
-        throw new Error('Failed to refresh tokens');
+        logout();
       }
 
       const { accessToken, refreshToken: newRefreshToken } =

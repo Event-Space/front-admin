@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import {
   Box,
   Typography,
@@ -12,11 +12,19 @@ import {
 import useFetch from '../../shared/network/useFetch';
 import { useUserStore } from '../../app/store/useUserStore';
 import PersonIcon from '@mui/icons-material/Person';
+import { ISpace } from '../../entities/types/ISpace';
+import SpaceDashboardIcon from '@mui/icons-material/SpaceDashboard';
+import { CalendarIcon } from '@mui/x-date-pickers';
 
 export default function HomePage() {
   const { user } = useUserStore();
+  const [spaceSize, setSpaceSize] = useState(0);
   const { data, loading, fetchData } = useFetch<any[]>(
-    'https://server.kenuki.org/api/manager/users-count',
+    'https://space-event.kenuki.org/security-service/api/manager/users-count',
+  );
+
+  const { fetchData: fetchSpaces } = useFetch<ISpace[]>(
+    'https://space-event.kenuki.org/order-service/api/v1/space',
   );
 
   useEffect(() => {
@@ -25,6 +33,17 @@ export default function HomePage() {
         Authorization: `Bearer ${user?.tokens.accessToken}`,
         'Content-Type': 'application/json',
       },
+    });
+
+    fetchSpaces({
+      headers: {
+        Authorization: `Bearer ${user?.tokens.accessToken}`,
+        'Content-Type': 'application/json',
+      },
+    }).then(res => {
+      if (res) {
+        setSpaceSize(res.length);
+      }
     });
   }, []);
 
@@ -49,10 +68,110 @@ export default function HomePage() {
       {loading ? (
         <CircularProgress />
       ) : (
-        <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: '20px' }}>
+        <Box
+          sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '40px',
+            flexWrap: 'wrap',
+          }}
+        >
+          <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: '40px' }}>
+            <Card
+              sx={{
+                minWidth: 275,
+                padding: '20px',
+                display: 'flex',
+                alignItems: 'center',
+              }}
+            >
+              <Box
+                sx={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  marginRight: '15px',
+                }}
+              >
+                <PersonIcon color="primary" sx={{ fontSize: '40px' }} />
+              </Box>
+              <Box>
+                <Typography
+                  variant="h5"
+                  component="div"
+                  sx={{ fontWeight: 'bold' }}
+                >
+                  Users
+                </Typography>
+                <Typography
+                  variant="body2"
+                  color="text.secondary"
+                  sx={{ marginTop: '8px' }}
+                >
+                  Total number of users: {data}
+                </Typography>
+                <CardActions sx={{ paddingLeft: '0', marginTop: '10px' }}>
+                  <Button
+                    size="small"
+                    variant="outlined"
+                    color="primary"
+                    href="/users"
+                  >
+                    View Details
+                  </Button>
+                </CardActions>
+              </Box>
+            </Card>
+            <Card
+              sx={{
+                minWidth: 450,
+                padding: '20px',
+                display: 'flex',
+                alignItems: 'center',
+              }}
+            >
+              <Box
+                sx={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  marginRight: '15px',
+                }}
+              >
+                <SpaceDashboardIcon
+                  color="primary"
+                  sx={{ fontSize: '120px' }}
+                />
+              </Box>
+              <Box>
+                <Typography
+                  variant="h5"
+                  component="div"
+                  sx={{ fontWeight: 'bold' }}
+                >
+                  Spaces
+                </Typography>
+                <Typography
+                  variant="body2"
+                  color="text.secondary"
+                  sx={{ marginTop: '8px' }}
+                >
+                  Total number of spaces: {spaceSize}
+                </Typography>
+                <CardActions sx={{ paddingLeft: '0', marginTop: '10px' }}>
+                  <Button
+                    size="small"
+                    variant="outlined"
+                    color="primary"
+                    href="/spaces"
+                  >
+                    View Details
+                  </Button>
+                </CardActions>
+              </Box>
+            </Card>
+          </Box>
           <Card
             sx={{
-              minWidth: 275,
+              width: 765,
               padding: '20px',
               display: 'flex',
               alignItems: 'center',
@@ -65,26 +184,29 @@ export default function HomePage() {
                 marginRight: '15px',
               }}
             >
-              <PersonIcon color="primary" sx={{ fontSize: '40px' }} />
+              <CalendarIcon color="primary" sx={{ fontSize: '150px' }} />
             </Box>
             <Box>
               <Typography
-                variant="h5"
+                variant="h6"
                 component="div"
                 sx={{ fontWeight: 'bold' }}
               >
-                Users
+                Calendar
               </Typography>
-              <Typography
-                variant="body2"
-                color="text.secondary"
-                sx={{ marginTop: '8px' }}
+              <Typography variant="body2" color="text.secondary">
+                Lorem ipsum, dolor sit amet consectetur adipisicing elit.
+                Repellendus minus, nesciunt nam odio est neque amet corporis
+                laudantium dolore voluptatum praesentium, harum perferendis at!
+              </Typography>
+              <CardActions
+                sx={{
+                  display: 'flex',
+                  justifyContent: 'end',
+                }}
               >
-                Total number of users: {data}
-              </Typography>
-              <CardActions sx={{ paddingLeft: '0', marginTop: '10px' }}>
                 <Button
-                  size="small"
+                  size="medium"
                   variant="outlined"
                   color="primary"
                   href="/users"

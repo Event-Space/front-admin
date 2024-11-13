@@ -15,15 +15,18 @@ import { ISpace } from '../../entities/types/ISpace';
 import { EditSpaceDialog } from '../../shared/ui/EditSpaceDialog';
 import { DeleteSpaceDialog } from '../../shared/ui/DeleteSpaceDialog';
 import { CreateSpaceDialog } from '../../shared/ui/CreateSpaceDialog';
+import { TablePagination } from '@mui/material';
 
 export default function SpacePage() {
   const { user, loading: loadingUser } = useUserStore();
   const [data, setData] = useState<ISpace[] | undefined>();
   const [filteredData, setFilteredData] = useState<ISpace[] | undefined>();
   const [searchQuery, setSearchQuery] = useState<string>('');
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
 
   const { loading: loadingData, fetchData } = useFetch<ISpace[]>(
-    'https://zenuki.kz/api/v1/space',
+    'https://space-event.kenuki.org/order-service/api/v1/space',
   );
 
   const [openEdit, setOpenEdit] = useState(false);
@@ -32,7 +35,7 @@ export default function SpacePage() {
   const [openDelete, setOpenDelete] = useState(false);
 
   const { fetchData: deleteSpace } = useFetch<ISpace[]>(
-    `https://zenuki.kz/api/v1/space/delete/${selectedSpace?.id}`,
+    `https://space-event.kenuki.org/order-service/api/v1/space/delete/${selectedSpace?.id}`,
   );
 
   const fetchSpaceData = () => {
@@ -52,6 +55,7 @@ export default function SpacePage() {
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const query = event.target.value.toLowerCase();
     setSearchQuery(query);
+    setPage(0);
 
     if (data) {
       setFilteredData(
@@ -161,11 +165,28 @@ export default function SpacePage() {
         {(loadingData || loadingUser) && <CircularProgress />}
 
         {!loadingData && filteredData && (
-          <SpaceTable
-            data={filteredData}
-            onEditClick={handleEditClick}
-            onDeleteClick={handleDeleteClick}
-          />
+          <>
+            <SpaceTable
+              data={filteredData.slice(
+                page * rowsPerPage,
+                page * rowsPerPage + rowsPerPage,
+              )}
+              onEditClick={handleEditClick}
+              onDeleteClick={handleDeleteClick}
+            />
+            <TablePagination
+              component="div"
+              count={filteredData.length}
+              rowsPerPage={rowsPerPage}
+              page={page}
+              onPageChange={(event, newPage) => setPage(newPage)}
+              onRowsPerPageChange={event => {
+                setRowsPerPage(parseInt(event.target.value, 10));
+                setPage(0);
+              }}
+              rowsPerPageOptions={[5, 10, 25]}
+            />
+          </>
         )}
 
         {selectedSpace && (

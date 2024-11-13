@@ -23,7 +23,9 @@ export default function CreateSpaceDialog({
   onClose,
 }: CreateSpaceDialogProps) {
   const { user } = useUserStore();
-  const { fetchData: createSpace } = useFetch('https://zenuki.kz/api/v1/space');
+  const { fetchData: createSpace } = useFetch(
+    'https://space-event.kenuki.org/order-service/api/v1/space',
+  );
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [newSpace, setNewSpace] = useState({
     name: '',

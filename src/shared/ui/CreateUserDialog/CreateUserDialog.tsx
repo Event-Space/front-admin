@@ -22,7 +22,7 @@ export default function CreateUserDialog({
 }: CreateUserDialogProps) {
   const { user } = useUserStore();
   const { fetchData: createUser } = useFetch(
-    'https://server.kenuki.org/api/manager/users',
+    'https://space-event.kenuki.org/security-service/api/manager/users',
   );
   const [newUser, setNewUser] = useState({
     email: '',

@@ -41,7 +41,7 @@ export default function SpacesTable({
             <TableCell>{index + 1}</TableCell>
             <TableCell>
               <img
-                src={`https://zenuki.kz/api/v1/files/${space.imageUrl}`}
+                src={`https://space-event.kenuki.org/order-service/api/v1/files/${space.imageUrl}`}
                 width="300px"
                 height="200px"
                 alt={space.name}

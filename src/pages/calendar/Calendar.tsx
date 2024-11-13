@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import {
   Box,
   Typography,
@@ -9,12 +9,12 @@ import {
   TableHead,
   TableRow,
   Paper,
-  Chip,
   FormControl,
   InputLabel,
   MenuItem,
   Select,
   SelectChangeEvent,
+  Button,
 } from '@mui/material';
 import { useUserStore } from '../../app/store/useUserStore';
 import { ISpace } from '../../entities/types/ISpace';
@@ -31,45 +31,8 @@ function CalendarPage() {
   const [events, setEvents] = useState<ISlot[]>([]);
   const [selectedSpaceId, setSelectedSpaceId] = useState<string | null>(null);
   const { fetchData: fetchSpaces } = useFetch<ISpace[]>(
-    'https://zenuki.kz/api/v1/space',
+    'https://space-event.kenuki.org/order-service/api/v1/space',
   );
-
-  const { fetchData: fetchSlot } = useFetch<ISlot[]>(
-    `https://zenuki.kz/api/v1/slots/${selectedSpaceId}`,
-  );
-
-  useEffect(() => {
-    fetchSpaces({
-      headers: {
-        Authorization: `Bearer ${user?.tokens.accessToken}`,
-        'Content-Type': 'application/json',
-      },
-    }).then(response => {
-      if (response) {
-        setData(response);
-      }
-    });
-  }, []);
-
-  useEffect(() => {
-    if (selectedSpaceId) {
-      fetchSlot({
-        headers: {
-          Authorization: `Bearer ${user?.tokens.accessToken}`,
-          'Content-Type': 'application/json',
-        },
-      }).then(response => {
-        console.log(response);
-        if (response) {
-          setEvents(response);
-        }
-      });
-    }
-  }, [selectedSpaceId]);
-
-  const handleSpaceChange = (event: SelectChangeEvent) => {
-    setSelectedSpaceId(event.target.value as string);
-  };
 
   const now = new Date();
   const currentMonth = now.getMonth();
@@ -98,14 +61,92 @@ function CalendarPage() {
 
   const findEventsForDate = (date: Date | null): ISlot[] => {
     if (!date) return [];
-
     const dateStr = date.toDateString();
-
     return events.filter(event => {
       const eventDate = new Date(event.startTime).toDateString();
       return eventDate === dateStr;
     });
   };
+
+  const handleSpaceChange = (event: SelectChangeEvent) => {
+    setSelectedSpaceId(event.target.value as string);
+  };
+
+  const updateSlots = useCallback(() => {
+    if (selectedSpaceId) {
+      fetch(
+        `https://space-event.kenuki.org/order-service/api/v1/slots/${selectedSpaceId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${user?.tokens.accessToken}`,
+            'Content-Type': 'application/json',
+          },
+        },
+      )
+        .then(response => response.json())
+        .then(data => setEvents(data));
+    }
+  }, [selectedSpaceId, user]);
+
+  const handleAddEvent = useCallback(
+    (day: Date) => {
+      const dayStart = new Date(day);
+      dayStart.setHours(0, 0, 0, 1);
+      const startTime = `${dayStart.getFullYear()}-${String(dayStart.getMonth() + 1).padStart(2, '0')}-${String(dayStart.getDate()).padStart(2, '0')}T00:00:00.00`;
+
+      const dayFinish = new Date(day);
+      dayFinish.setHours(23, 59, 59, 999);
+      const endTime = `${dayFinish.getFullYear()}-${String(dayFinish.getMonth() + 1).padStart(2, '0')}-${String(dayFinish.getDate()).padStart(2, '0')}T23:59:59.99`;
+
+      const url = `https://space-event.kenuki.org/order-service/api/v1/slots/${selectedSpaceId}?startTime=${startTime}&endTime=${endTime}`;
+
+      fetch(url, {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${user?.tokens.accessToken}`,
+          'Content-Type': 'application/json',
+        },
+      }).then(response => {
+        if (response.ok) {
+          updateSlots();
+        }
+      });
+    },
+    [selectedSpaceId, user, updateSlots],
+  );
+
+  const deleteSlot = (id: number) => {
+    const url = `https://space-event.kenuki.org/order-service/api/v1/slots/${id}`;
+
+    fetch(url, {
+      method: 'DELETE',
+      headers: {
+        Authorization: `Bearer ${user?.tokens.accessToken}`,
+        'Content-Type': 'application/json',
+      },
+    }).then(response => {
+      if (response.ok) {
+        updateSlots(); // Refresh events after deleting a slot
+      }
+    });
+  };
+
+  useEffect(() => {
+    fetchSpaces({
+      headers: {
+        Authorization: `Bearer ${user?.tokens.accessToken}`,
+        'Content-Type': 'application/json',
+      },
+    }).then(response => {
+      if (response) {
+        setData(response);
+      }
+    });
+  }, [fetchSpaces, user]);
+
+  useEffect(() => {
+    updateSlots(); // Initial fetch of slots when selectedSpaceId changes
+  }, [selectedSpaceId, updateSlots]);
 
   return (
     <Box sx={{ padding: '20px' }}>
@@ -143,15 +184,47 @@ function CalendarPage() {
               <TableRow key={index}>
                 {week.map((day, idx) => (
                   <TableCell key={idx} align="left">
-                    {day ? day.getDate() : ''}
-                    {findEventsForDate(day).map(event => (
-                      <Chip
-                        key={event.id}
-                        label={event.booked ? 'Booked' : 'free'}
-                        color="primary"
-                        sx={{ padding: '0', margin: '0' }}
-                      />
-                    ))}
+                    <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+                      {selectedSpaceId && day ? (
+                        <>
+                          {day.getDate()}
+                          {findEventsForDate(day).length > 0 ? (
+                            findEventsForDate(day).map(event => (
+                              <Button
+                                key={event.id}
+                                variant="contained"
+                                color={event.booked ? 'warning' : 'info'}
+                                size="small"
+                                sx={{
+                                  textWrap: 'nowrap',
+                                  width: '100px',
+                                  alignSelf: 'center',
+                                }}
+                                onClick={() => deleteSlot(event.id)}
+                              >
+                                {event.booked ? 'Booked' : 'Free'}
+                              </Button>
+                            ))
+                          ) : (
+                            <Button
+                              variant="outlined"
+                              color="primary"
+                              size="small"
+                              sx={{
+                                textWrap: 'nowrap',
+                                width: '100px',
+                                alignSelf: 'center',
+                              }}
+                              onClick={() => handleAddEvent(day!!)}
+                            >
+                              +
+                            </Button>
+                          )}
+                        </>
+                      ) : (
+                        ''
+                      )}
+                    </Box>
                   </TableCell>
                 ))}
               </TableRow>

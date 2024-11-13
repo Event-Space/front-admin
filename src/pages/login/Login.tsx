@@ -21,7 +21,7 @@ export default function LoginPage() {
   const { data, error, loading, fetchData } = useFetch<{
     accessToken: string;
     refreshToken: string;
-  }>('https://server.kenuki.org/api/auth/login');
+  }>('https://space-event.kenuki.org/security-service/api/auth/login');
 
   const { login: contextLogin, user, loading: userLoading } = useUserStore();
   const navigate = useNavigate();
