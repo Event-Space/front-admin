@@ -28,7 +28,6 @@ export default function Header() {
           setUserData(response);
         }
       });
-      console.log(userData);
     }
   }, [loading]);
 

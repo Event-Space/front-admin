@@ -31,7 +31,6 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({
 
   useEffect(() => {
     const interval = setInterval(() => {
-      console.log('refreshed token');
       refreshTokens();
     }, 60000);
 
