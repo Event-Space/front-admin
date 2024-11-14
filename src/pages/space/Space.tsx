@@ -59,7 +59,14 @@ export default function SpacePage() {
 
     if (data) {
       setFilteredData(
-        data.filter(space => (space.name?.toLowerCase() || '').includes(query)),
+        data.filter(space => {
+          const lowerCaseQuery = query.toLowerCase();
+          return (
+            space.name?.toLowerCase().includes(lowerCaseQuery) ||
+            space.address?.toLowerCase().includes(lowerCaseQuery) ||
+            space.location?.toLowerCase().includes(lowerCaseQuery)
+          );
+        }),
       );
     }
   };
