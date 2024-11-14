@@ -9,7 +9,7 @@ import { useEffect, useState } from 'react';
 
 export default function Header() {
   const { toggleSidebar } = useSidebar();
-  const { user, loading } = useUserStore();
+  const { user, loading, logout } = useUserStore();
   const [userData, setUserData] = useState<IUser>();
   const { fetchData } = useFetch<IUser>(
     'https://space-event.kenuki.org/security-service/api/user/profile',
@@ -25,6 +25,9 @@ export default function Header() {
         method: 'GET',
       }).then(response => {
         if (response) {
+          if (response.role !== 'MANAGER') {
+            logout();
+          }
           setUserData(response);
         }
       });
