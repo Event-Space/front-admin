@@ -15,6 +15,10 @@ import {
   Select,
   SelectChangeEvent,
   Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
 } from '@mui/material';
 import { useUserStore } from '../../app/store/useUserStore';
 import { ISpace } from '../../entities/types/ISpace';
@@ -185,6 +189,48 @@ function CalendarPage() {
     'December',
   ];
 
+  // Modal state for delete event
+  const [openDeleteModal, setOpenDeleteModal] = useState<boolean>(false);
+  const [eventToDelete, setEventToDelete] = useState<ISlot | null>(null);
+
+  const handleDeleteModalOpen = (event: ISlot) => {
+    setEventToDelete(event);
+    setOpenDeleteModal(true);
+  };
+
+  const handleDeleteModalClose = () => {
+    setEventToDelete(null);
+    setOpenDeleteModal(false);
+  };
+
+  const handleDeleteConfirm = () => {
+    if (eventToDelete) {
+      deleteSlot(eventToDelete.id);
+      handleDeleteModalClose();
+    }
+  };
+
+  // Modal state for adding event
+  const [openAddEventModal, setOpenAddEventModal] = useState<boolean>(false);
+  const [dayToAddEvent, setDayToAddEvent] = useState<Date | null>(null);
+
+  const handleAddEventModalOpen = (day: Date) => {
+    setDayToAddEvent(day);
+    setOpenAddEventModal(true);
+  };
+
+  const handleAddEventModalClose = () => {
+    setDayToAddEvent(null);
+    setOpenAddEventModal(false);
+  };
+
+  const handleAddEventConfirm = () => {
+    if (dayToAddEvent) {
+      handleAddEvent(dayToAddEvent);
+      handleAddEventModalClose();
+    }
+  };
+
   return (
     <Box sx={{ padding: '20px' }}>
       <FormControl sx={{ mb: 2, width: '300px' }}>
@@ -247,7 +293,7 @@ function CalendarPage() {
                                       width: '100px',
                                       alignSelf: 'center',
                                     }}
-                                    onClick={() => deleteSlot(event.id)}
+                                    onClick={() => handleDeleteModalOpen(event)}
                                   >
                                     {event.booked ? 'Booked' : 'Free'}
                                   </Button>
@@ -262,7 +308,7 @@ function CalendarPage() {
                                     width: '100px',
                                     alignSelf: 'center',
                                   }}
-                                  onClick={() => handleAddEvent(day!!)}
+                                  onClick={() => handleAddEventModalOpen(day!!)}
                                 >
                                   +
                                 </Button>
@@ -281,6 +327,38 @@ function CalendarPage() {
           </TableContainer>
         </>
       )}
+
+      {/* Add Event Confirmation Modal */}
+      <Dialog open={openAddEventModal} onClose={handleAddEventModalClose}>
+        <DialogTitle>Confirm Add Event</DialogTitle>
+        <DialogContent>
+          Are you sure you want to add an event for this day?
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleAddEventModalClose} color="primary">
+            Cancel
+          </Button>
+          <Button onClick={handleAddEventConfirm} color="secondary">
+            Confirm
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Delete Event Confirmation Modal */}
+      <Dialog open={openDeleteModal} onClose={handleDeleteModalClose}>
+        <DialogTitle>Confirm Delete</DialogTitle>
+        <DialogContent>
+          Are you sure you want to delete this event?
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleDeleteModalClose} color="primary">
+            Cancel
+          </Button>
+          <Button onClick={handleDeleteConfirm} color="secondary">
+            Confirm
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 }
