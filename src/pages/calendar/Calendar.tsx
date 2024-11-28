@@ -34,9 +34,13 @@ function CalendarPage() {
     'https://space-event.kenuki.org/order-service/api/v1/space',
   );
 
-  const now = new Date();
-  const currentMonth = now.getMonth();
-  const currentYear = now.getFullYear();
+  const [currentMonth, setCurrentMonth] = useState<number>(
+    new Date().getMonth(),
+  );
+  const [currentYear, setCurrentYear] = useState<number>(
+    new Date().getFullYear(),
+  );
+
   const firstDayOfMonth = new Date(currentYear, currentMonth, 1);
   const lastDayOfMonth = new Date(currentYear, currentMonth + 1, 0);
 
@@ -126,7 +130,7 @@ function CalendarPage() {
       },
     }).then(response => {
       if (response.ok) {
-        updateSlots(); // Refresh events after deleting a slot
+        updateSlots();
       }
     });
   };
@@ -142,17 +146,47 @@ function CalendarPage() {
         setData(response);
       }
     });
-  }, [fetchSpaces, user]);
+  }, [user]);
 
   useEffect(() => {
-    updateSlots(); // Initial fetch of slots when selectedSpaceId changes
+    updateSlots();
   }, [selectedSpaceId, updateSlots]);
+
+  const handlePrevMonth = () => {
+    if (currentMonth === 0) {
+      setCurrentMonth(11);
+      setCurrentYear(currentYear - 1);
+    } else {
+      setCurrentMonth(currentMonth - 1);
+    }
+  };
+
+  const handleNextMonth = () => {
+    if (currentMonth === 11) {
+      setCurrentMonth(0);
+      setCurrentYear(currentYear + 1);
+    } else {
+      setCurrentMonth(currentMonth + 1);
+    }
+  };
+
+  const monthNames = [
+    'January',
+    'February',
+    'March',
+    'April',
+    'May',
+    'June',
+    'July',
+    'August',
+    'September',
+    'October',
+    'November',
+    'December',
+  ];
 
   return (
     <Box sx={{ padding: '20px' }}>
-      <Typography variant="h4" sx={{ mb: 2 }}>
-        Calendar
-      </Typography>
       <FormControl sx={{ mb: 2, width: '300px' }}>
         <InputLabel id="space-select-label">Select Space</InputLabel>
         <Select
@@ -168,70 +202,85 @@ function CalendarPage() {
           ))}
         </Select>
       </FormControl>
-      <TableContainer component={Paper}>
-        <Table>
-          <TableHead>
-            <TableRow>
-              {daysOfWeek.map(day => (
-                <TableCell key={day} align="center">
-                  {day}
-                </TableCell>
-              ))}
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {calendarRows.map((week, index) => (
-              <TableRow key={index}>
-                {week.map((day, idx) => (
-                  <TableCell key={idx} align="left">
-                    <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-                      {selectedSpaceId && day ? (
-                        <>
-                          {day.getDate()}
-                          {findEventsForDate(day).length > 0 ? (
-                            findEventsForDate(day).map(event => (
-                              <Button
-                                key={event.id}
-                                variant="contained"
-                                color={event.booked ? 'warning' : 'info'}
-                                size="small"
-                                sx={{
-                                  textWrap: 'nowrap',
-                                  width: '100px',
-                                  alignSelf: 'center',
-                                }}
-                                onClick={() => deleteSlot(event.id)}
-                              >
-                                {event.booked ? 'Booked' : 'Free'}
-                              </Button>
-                            ))
+      {selectedSpaceId && (
+        <>
+          <Typography variant="h4" sx={{ mb: 2 }}>
+            {`${monthNames[currentMonth]} ${currentYear}`}
+          </Typography>
+          <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
+            <Button variant="outlined" onClick={handlePrevMonth}>
+              Previous
+            </Button>
+            <Button variant="outlined" onClick={handleNextMonth}>
+              Next
+            </Button>
+          </Box>
+          <TableContainer component={Paper}>
+            <Table>
+              <TableHead>
+                <TableRow>
+                  {daysOfWeek.map(day => (
+                    <TableCell key={day} align="center">
+                      {day}
+                    </TableCell>
+                  ))}
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {calendarRows.map((week, index) => (
+                  <TableRow key={index}>
+                    {week.map((day, idx) => (
+                      <TableCell key={idx} align="left">
+                        <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+                          {selectedSpaceId && day ? (
+                            <>
+                              {day.getDate()}
+                              {findEventsForDate(day).length > 0 ? (
+                                findEventsForDate(day).map(event => (
+                                  <Button
+                                    key={event.id}
+                                    variant="contained"
+                                    color={event.booked ? 'warning' : 'info'}
+                                    size="small"
+                                    sx={{
+                                      textWrap: 'nowrap',
+                                      width: '100px',
+                                      alignSelf: 'center',
+                                    }}
+                                    onClick={() => deleteSlot(event.id)}
+                                  >
+                                    {event.booked ? 'Booked' : 'Free'}
+                                  </Button>
+                                ))
+                              ) : (
+                                <Button
+                                  variant="outlined"
+                                  color="primary"
+                                  size="small"
+                                  sx={{
+                                    textWrap: 'nowrap',
+                                    width: '100px',
+                                    alignSelf: 'center',
+                                  }}
+                                  onClick={() => handleAddEvent(day!!)}
+                                >
+                                  +
+                                </Button>
+                              )}
+                            </>
                           ) : (
-                            <Button
-                              variant="outlined"
-                              color="primary"
-                              size="small"
-                              sx={{
-                                textWrap: 'nowrap',
-                                width: '100px',
-                                alignSelf: 'center',
-                              }}
-                              onClick={() => handleAddEvent(day!!)}
-                            >
-                              +
-                            </Button>
+                            ''
                           )}
-                        </>
-                      ) : (
-                        ''
-                      )}
-                    </Box>
-                  </TableCell>
+                        </Box>
+                      </TableCell>
+                    ))}
+                  </TableRow>
                 ))}
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </>
+      )}
     </Box>
   );
 }

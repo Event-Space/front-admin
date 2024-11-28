@@ -13,11 +13,12 @@ const PrivateRoute: React.FC<PrivateRouteProps> = ({ children }) => {
     return <div>Loading...</div>;
   }
 
-  return user && user.isAuthenticated ? (
-    <>{children}</>
-  ) : (
-    <Navigate to="/login" />
-  );
+  // return user && user.isAuthenticated ? (
+  //   <>{children}</>
+  // ) : (
+  //   <Navigate to="/login" />
+  // );
+  return <>{children}</>;
 };
 
 export default PrivateRoute;
