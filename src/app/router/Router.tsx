@@ -10,7 +10,7 @@ import LoginPage from '../../pages/login/Login';
 import PrivateRoute from './PrivateRoute';
 import UsersPage from '../../pages/users/Users';
 import SpacePage from '../../pages/space/Space';
-import CalendarPage from '../../pages/calendar/Calendar';
+import CalendarPage from '../../pages/calendar/CalendarPage';
 
 const router = createBrowserRouter(
   createRoutesFromElements(
