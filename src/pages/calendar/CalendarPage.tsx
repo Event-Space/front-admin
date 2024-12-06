@@ -246,6 +246,22 @@ function CalendarPage() {
     }
   };
 
+  const handleStatusChange = (newStatus: string) => {
+    const url = `https://space-event.kenuki.org/order-service/api/v1/slots/bookings/${dt?.id}/status?status=${newStatus}`;
+
+    fetch(url, {
+      method: 'PATCH',
+      headers: {
+        Authorization: `Bearer ${user?.tokens.accessToken}`,
+        'Content-Type': 'application/json',
+      },
+    }).then(response => {
+      if (response.ok) {
+        updateSlots();
+      }
+    });
+  };
+
   return (
     <Box sx={{ padding: '20px' }}>
       <FormControl sx={{ mb: 2, width: '300px' }}>
@@ -271,6 +287,7 @@ function CalendarPage() {
           handlePrevMonth={handlePrevMonth}
           handleNextMonth={handleNextMonth}
           calendarRows={calendarRows}
+          events={slotsInfo}
           selectedSpaceId={selectedSpaceId}
           findEventsForDate={findEventsForDate}
           handleDeleteModalOpen={handleDeleteModalOpen}
@@ -282,6 +299,7 @@ function CalendarPage() {
         openInfoModal={openDetailedModal}
         info={dt}
         handleInfoModalClose={handleCloseDetailModal}
+        handleStatusChange={handleStatusChange}
       />
 
       <AddModal

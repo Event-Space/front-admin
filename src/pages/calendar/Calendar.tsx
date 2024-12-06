@@ -24,6 +24,7 @@ interface CalendarProps {
   handleDeleteModalOpen: (event: ISlot) => void;
   handleAddEventModalOpen: (date: Date) => void;
   handleInfo: (id: number) => void;
+  events: any[];
 }
 
 const Calendar: React.FC<CalendarProps> = ({
@@ -37,6 +38,7 @@ const Calendar: React.FC<CalendarProps> = ({
   handleDeleteModalOpen,
   handleAddEventModalOpen,
   handleInfo,
+  events,
 }) => {
   const monthNames = [
     'January',
@@ -54,6 +56,8 @@ const Calendar: React.FC<CalendarProps> = ({
   ];
 
   const daysOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+
+  const ids = events.map(event => event.slot.id);
 
   return (
     <>
@@ -93,7 +97,9 @@ const Calendar: React.FC<CalendarProps> = ({
                               <Button
                                 key={event.id}
                                 variant="contained"
-                                color={event.booked ? 'warning' : 'info'}
+                                color={
+                                  ids.includes(event.id) ? 'warning' : 'info'
+                                }
                                 size="small"
                                 sx={{
                                   textWrap: 'nowrap',
@@ -101,12 +107,12 @@ const Calendar: React.FC<CalendarProps> = ({
                                   alignSelf: 'center',
                                 }}
                                 onClick={() =>
-                                  event.booked
+                                  ids.includes(event.id)
                                     ? handleInfo(event.id)
                                     : handleDeleteModalOpen(event)
                                 }
                               >
-                                {event.booked ? 'Booked' : 'Free'}
+                                {ids.includes(event.id) ? 'Booked' : 'Free'}
                               </Button>
                             ))
                           ) : (

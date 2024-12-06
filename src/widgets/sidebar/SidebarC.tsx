@@ -2,11 +2,12 @@ import { Menu, MenuItem, Sidebar } from 'react-pro-sidebar';
 import HomeIcon from '@mui/icons-material/Home';
 import SchoolIcon from '@mui/icons-material/SchoolOutlined';
 import GroupIcon from '@mui/icons-material/Group';
-import { LogoutOutlined } from '@mui/icons-material';
+import { LogoutOutlined, PaymentOutlined } from '@mui/icons-material';
 import { useSidebar } from '../../app/store/useSidebar';
 import { useUserStore } from '../../app/store/useUserStore';
 import { useLocation } from 'react-router-dom';
 import LocationCityIcon from '@mui/icons-material/LocationCity';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 
 const SidebarC = () => {
@@ -19,6 +20,7 @@ const SidebarC = () => {
     { name: 'Users', icon: <GroupIcon />, path: '/users' },
     { name: 'Spaces', icon: <LocationCityIcon />, path: '/spaces' },
     { name: 'Calendar', icon: <CalendarMonthIcon />, path: '/calendar' },
+    { name: 'Profile', icon: <AccountCircleIcon />, path: '/profile' },
   ];
 
   return (

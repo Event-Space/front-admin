@@ -11,6 +11,7 @@ import PrivateRoute from './PrivateRoute';
 import UsersPage from '../../pages/users/Users';
 import SpacePage from '../../pages/space/Space';
 import CalendarPage from '../../pages/calendar/CalendarPage';
+import { Profile } from '../../pages/profile';
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -45,6 +46,14 @@ const router = createBrowserRouter(
           element={
             <PrivateRoute>
               <CalendarPage />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/profile"
+          element={
+            <PrivateRoute>
+              <Profile />
             </PrivateRoute>
           }
         />

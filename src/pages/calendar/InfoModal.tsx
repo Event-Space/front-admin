@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Dialog,
   DialogTitle,
@@ -6,10 +6,14 @@ import {
   DialogActions,
   Button,
   Typography,
+  Select,
+  MenuItem,
+  FormControl,
+  InputLabel,
+  SelectChangeEvent,
 } from '@mui/material';
 import { ISlot } from '../../entities/types/ISlot';
 import { ISpace } from '../../entities/types/ISpace';
-import { format } from 'date-fns';
 
 interface DetailsInfo {
   id: number;
@@ -24,13 +28,29 @@ interface InfoModalProps {
   openInfoModal: boolean;
   info: DetailsInfo | null;
   handleInfoModalClose: () => void;
+  handleStatusChange: (newStatus: string) => void;
 }
 
 const InfoModal: React.FC<InfoModalProps> = ({
   openInfoModal,
   handleInfoModalClose,
   info,
+  handleStatusChange,
 }) => {
+  const [status, setStatus] = useState<string>(info?.status || 'PENDING');
+
+  useEffect(() => {
+    if (info) {
+      setStatus(info?.status);
+    }
+  }, [info]);
+
+  const handleStatusSelectChange = (event: SelectChangeEvent<string>) => {
+    const newStatus = event.target.value;
+    setStatus(newStatus);
+    handleStatusChange(newStatus);
+  };
+
   return (
     <Dialog open={openInfoModal} onClose={handleInfoModalClose}>
       <DialogTitle>
@@ -49,10 +69,15 @@ const InfoModal: React.FC<InfoModalProps> = ({
         <Typography
           sx={{
             textAlign: 'right',
-            color: info?.status === 'CONFIRMED' ? 'green' : 'red',
+            color:
+              status === 'CONFIRMED'
+                ? 'green'
+                : status === 'CANCELLED'
+                  ? 'red'
+                  : 'orange',
           }}
         >
-          {info?.status}
+          {status}
         </Typography>
         <Typography>Space Name: {info?.space.name}</Typography>
         <Typography>Booked By: {info?.userEmail}</Typography>
@@ -61,7 +86,21 @@ const InfoModal: React.FC<InfoModalProps> = ({
           {info?.bookingTime ? new Date(info.bookingTime).toDateString() : ''}
         </Typography>
         <Typography>Price: {info?.space.baseRentalCost}</Typography>
+
+        <FormControl fullWidth sx={{ mt: 2 }}>
+          <InputLabel>Status</InputLabel>
+          <Select
+            value={status}
+            onChange={handleStatusSelectChange}
+            label="Status"
+          >
+            <MenuItem value="CONFIRMED">CONFIRMED</MenuItem>
+            <MenuItem value="PENDING">PENDING</MenuItem>
+            <MenuItem value="CANCELLED">CANCELLED</MenuItem>
+          </Select>
+        </FormControl>
       </DialogContent>
+
       <DialogActions
         sx={{
           display: 'flex',
@@ -72,8 +111,8 @@ const InfoModal: React.FC<InfoModalProps> = ({
         <Button onClick={handleInfoModalClose} color="primary">
           Close
         </Button>
-        <Button onClick={handleInfoModalClose} color="primary">
-          Change Status
+        <Button onClick={() => handleStatusChange(status)} color="primary">
+          Save Changes
         </Button>
       </DialogActions>
     </Dialog>
