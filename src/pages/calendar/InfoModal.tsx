@@ -11,6 +11,7 @@ import {
   FormControl,
   InputLabel,
   SelectChangeEvent,
+  Input,
 } from '@mui/material';
 import { ISlot } from '../../entities/types/ISlot';
 import { ISpace } from '../../entities/types/ISpace';
@@ -38,6 +39,7 @@ const InfoModal: React.FC<InfoModalProps> = ({
   handleStatusChange,
 }) => {
   const [status, setStatus] = useState<string>(info?.status || 'PENDING');
+  const [changed, setChanged] = useState(false);
 
   useEffect(() => {
     if (info) {
@@ -47,8 +49,17 @@ const InfoModal: React.FC<InfoModalProps> = ({
 
   const handleStatusSelectChange = (event: SelectChangeEvent<string>) => {
     const newStatus = event.target.value;
+    if (info?.status === newStatus) {
+      setChanged(false);
+    } else {
+      setChanged(true);
+    }
     setStatus(newStatus);
-    handleStatusChange(newStatus);
+  };
+
+  const handleSave = () => {
+    handleStatusChange(status);
+    handleInfoModalClose();
   };
 
   return (
@@ -98,6 +109,9 @@ const InfoModal: React.FC<InfoModalProps> = ({
             <MenuItem value="PENDING">PENDING</MenuItem>
             <MenuItem value="CANCELLED">CANCELLED</MenuItem>
           </Select>
+          {changed && status !== 'CONFIRMED' && status !== info?.status && (
+            <Input placeholder="reason" />
+          )}
         </FormControl>
       </DialogContent>
 
@@ -111,7 +125,7 @@ const InfoModal: React.FC<InfoModalProps> = ({
         <Button onClick={handleInfoModalClose} color="primary">
           Close
         </Button>
-        <Button onClick={() => handleStatusChange(status)} color="primary">
+        <Button onClick={handleSave} color="primary">
           Save Changes
         </Button>
       </DialogActions>

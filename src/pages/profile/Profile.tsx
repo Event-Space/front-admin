@@ -46,7 +46,7 @@ export default function Profile() {
   }, [loading]);
 
   const [open, setOpen] = useState(false);
-  const [editUser, setEditUser] = useState<any>({ ...user });
+  const [editUser, setEditUser] = useState<any>({ firstname: user?.firstname });
 
   const handleClose = () => setOpen(false);
 
@@ -99,7 +99,7 @@ export default function Profile() {
             sx={{
               display: 'flex',
               flexDirection: 'column',
-              width: '100%',
+              width: '50%',
               padding: '20px',
               backgroundColor: '#f5f5f5',
               borderRadius: '10px',
@@ -154,7 +154,6 @@ export default function Profile() {
                 gap: '20px',
                 width: '100%',
                 maxWidth: '600px',
-                margin: '0 auto',
               }}
             >
               {/* Email */}

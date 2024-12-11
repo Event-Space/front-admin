@@ -31,7 +31,7 @@ function CalendarPage() {
   const { user } = useUserStore();
   const [data, setData] = useState<ISpace[]>([]);
   const [events, setEvents] = useState<ISlot[]>([]);
-  const [selectedSpaceId, setSelectedSpaceId] = useState<string | null>(null);
+  const [selectedSpaceId, setSelectedSpaceId] = useState<string | null>('2');
   const { fetchData: fetchSpaces } = useFetch<ISpace[]>(
     'https://space-event.kenuki.org/order-service/api/v1/space',
   );
