@@ -28,6 +28,7 @@ export default function EditSpaceDialog({
   const [file, setFile] = useState<File | null>(null);
   const [updatedSpace, setUpdatedSpace] = useState<ISpace>({ ...space });
   const [changes, setChanges] = useState<{ [key: string]: any }>({});
+  const [confirmOpen, setConfirmOpen] = useState(false);
 
   const apiUrl = file
     ? `https://space-event.kenuki.org/order-service/api/v1/space/updateWithFile/${space.id}`
@@ -56,6 +57,10 @@ export default function EditSpaceDialog({
   };
 
   const handleSave = () => {
+    setConfirmOpen(true); // Открыть confirm modal
+  };
+
+  const confirmSave = () => {
     const formData = new FormData();
     if (file) {
       formData.append('file', file);
@@ -73,97 +78,118 @@ export default function EditSpaceDialog({
         Authorization: `Bearer ${user?.tokens.accessToken}`,
       },
       body: formData,
-    }).then(() => onClose());
+    }).then(() => {
+      setConfirmOpen(false); // Закрыть confirm modal
+      onClose(); // Закрыть основной диалог
+    });
   };
 
   return (
-    <Dialog open={open} onClose={onClose}>
-      <DialogTitle>Edit Space</DialogTitle>
-      <DialogContent>
-        <TextField
-          margin="dense"
-          label="Name"
-          fullWidth
-          value={updatedSpace.name}
-          onChange={e =>
-            setUpdatedSpace({ ...updatedSpace, name: e.target.value })
-          }
-        />
-        <TextField
-          margin="dense"
-          label="Address"
-          fullWidth
-          value={updatedSpace.address}
-          onChange={e =>
-            setUpdatedSpace({ ...updatedSpace, address: e.target.value })
-          }
-        />
-        <TextField
-          margin="dense"
-          label="Location"
-          fullWidth
-          value={updatedSpace.location}
-          onChange={e =>
-            setUpdatedSpace({ ...updatedSpace, location: e.target.value })
-          }
-        />
-        <TextField
-          margin="dense"
-          label="Size"
-          fullWidth
-          type="number"
-          value={updatedSpace.size}
-          onChange={e =>
-            setUpdatedSpace({
-              ...updatedSpace,
-              size: parseInt(e.target.value, 10),
-            })
-          }
-        />
-        <TextField
-          margin="dense"
-          label="Max Capacity"
-          fullWidth
-          type="number"
-          value={updatedSpace.maxCapacity}
-          onChange={e =>
-            setUpdatedSpace({
-              ...updatedSpace,
-              maxCapacity: parseInt(e.target.value, 10),
-            })
-          }
-        />
-        <TextField
-          margin="dense"
-          label="Base Rental Cost"
-          fullWidth
-          type="number"
-          value={updatedSpace.baseRentalCost}
-          onChange={e =>
-            setUpdatedSpace({
-              ...updatedSpace,
-              baseRentalCost: parseFloat(e.target.value),
-            })
-          }
-        />
-        <InputLabel htmlFor="upload-file" sx={{ marginTop: '16px' }}>
-          Upload File{' '}
-          <Input
-            id="upload-file"
-            type="file"
-            onChange={handleFileChange}
-            disableUnderline
+    <>
+      <Dialog open={open} onClose={onClose}>
+        <DialogTitle>Edit Space</DialogTitle>
+        <DialogContent>
+          <TextField
+            margin="dense"
+            label="Name"
+            fullWidth
+            value={updatedSpace.name}
+            onChange={e =>
+              setUpdatedSpace({ ...updatedSpace, name: e.target.value })
+            }
           />
-        </InputLabel>
-      </DialogContent>
-      <DialogActions>
-        <Button onClick={onClose} color="primary">
-          Cancel
-        </Button>
-        <Button onClick={handleSave} color="primary">
-          Save
-        </Button>
-      </DialogActions>
-    </Dialog>
+          <TextField
+            margin="dense"
+            label="Address"
+            fullWidth
+            value={updatedSpace.address}
+            onChange={e =>
+              setUpdatedSpace({ ...updatedSpace, address: e.target.value })
+            }
+          />
+          <TextField
+            margin="dense"
+            label="Location"
+            fullWidth
+            value={updatedSpace.location}
+            onChange={e =>
+              setUpdatedSpace({ ...updatedSpace, location: e.target.value })
+            }
+          />
+          <TextField
+            margin="dense"
+            label="Size"
+            fullWidth
+            type="number"
+            value={updatedSpace.size}
+            onChange={e =>
+              setUpdatedSpace({
+                ...updatedSpace,
+                size: parseInt(e.target.value, 10),
+              })
+            }
+          />
+          <TextField
+            margin="dense"
+            label="Max Capacity"
+            fullWidth
+            type="number"
+            value={updatedSpace.maxCapacity}
+            onChange={e =>
+              setUpdatedSpace({
+                ...updatedSpace,
+                maxCapacity: parseInt(e.target.value, 10),
+              })
+            }
+          />
+          <TextField
+            margin="dense"
+            label="Base Rental Cost"
+            fullWidth
+            type="number"
+            value={updatedSpace.baseRentalCost}
+            onChange={e =>
+              setUpdatedSpace({
+                ...updatedSpace,
+                baseRentalCost: parseFloat(e.target.value),
+              })
+            }
+          />
+          <InputLabel htmlFor="upload-file" sx={{ marginTop: '16px' }}>
+            Upload File{' '}
+            <Input
+              id="upload-file"
+              type="file"
+              onChange={handleFileChange}
+              disableUnderline
+            />
+          </InputLabel>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={onClose} color="primary">
+            Cancel
+          </Button>
+          <Button onClick={handleSave} color="primary">
+            Save
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Confirm Save Modal */}
+      <Dialog open={confirmOpen} onClose={() => setConfirmOpen(false)}>
+        <DialogTitle>Confirm Save</DialogTitle>
+        <DialogContent>
+          Are you sure you want to save the changes?
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setConfirmOpen(false)} color="primary">
+            Cancel
+          </Button>
+          <Button onClick={confirmSave} color="primary">
+            Confirm
+          </Button>
+        </DialogActions>
+      </Dialog>
+    </>
   );
 }

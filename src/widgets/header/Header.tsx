@@ -45,9 +45,7 @@ export default function Header() {
       <Typography sx={{ fontSize: '20px', fontWeight: 'bold' }}>
         Manager Panel
       </Typography>
-      <Typography sx={{ marginRight: '10px' }}>
-        {userData?.email} | {userData?.role}
-      </Typography>
+      <Box></Box>
     </Box>
   );
 }

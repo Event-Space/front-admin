@@ -47,7 +47,7 @@ export default function SpacePage() {
     }).then(response => {
       if (response) {
         setData(response);
-        setFilteredData(response);
+        setFilteredData(response.reverse());
       }
     });
   };
@@ -180,18 +180,16 @@ export default function SpacePage() {
               )}
               onEditClick={handleEditClick}
               onDeleteClick={handleDeleteClick}
+              page={page}
             />
             <TablePagination
               component="div"
               count={filteredData.length}
-              rowsPerPage={rowsPerPage}
+              rowsPerPage={5}
               page={page}
-              onPageChange={(event, newPage) => setPage(newPage)}
-              onRowsPerPageChange={event => {
-                setRowsPerPage(parseInt(event.target.value, 10));
-                setPage(0);
-              }}
-              rowsPerPageOptions={[5, 10, 25]}
+              onPageChange={(_event, newPage) => setPage(newPage)}
+              labelRowsPerPage=""
+              rowsPerPageOptions={[]}
             />
           </>
         )}

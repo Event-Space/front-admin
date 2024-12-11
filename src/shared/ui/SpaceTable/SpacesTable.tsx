@@ -13,12 +13,14 @@ interface SpacesTableProps {
   data: ISpace[];
   onEditClick: (space: ISpace) => void;
   onDeleteClick: (space: ISpace) => void;
+  page: number;
 }
 
 export default function SpacesTable({
   data,
   onEditClick,
   onDeleteClick,
+  page,
 }: SpacesTableProps) {
   return (
     <Table component={Paper} style={{ marginTop: '20px' }}>
@@ -38,7 +40,7 @@ export default function SpacesTable({
       <TableBody>
         {data.map((space, index) => (
           <TableRow key={space.id}>
-            <TableCell>{index + 1}</TableCell>
+            <TableCell>{page * 5 + index + 1}</TableCell>
             <TableCell>
               <img
                 src={`https://space-event.kenuki.org/order-service/api/v1/files/${space.imageUrl}`}
